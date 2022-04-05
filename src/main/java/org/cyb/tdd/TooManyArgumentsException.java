@@ -1,7 +1,7 @@
 package org.cyb.tdd;
 
 public class TooManyArgumentsException extends RuntimeException {
-    String value;
+    private String value;
 
     public TooManyArgumentsException(String option) {
         super();

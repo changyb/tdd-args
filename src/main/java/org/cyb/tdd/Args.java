@@ -16,6 +16,8 @@ public class Args {
                     Arrays.stream(constructor.getParameters()).map(it ->
                             parseOption(arguments, it)).toArray();
             return (T) constructor.newInstance(values);
+        } catch (IllegalOptionException ex) {
+            throw ex;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -23,6 +25,9 @@ public class Args {
 
     private static Object parseOption(List<String> arguments, Parameter
             parameter) {
+        if (!parameter.isAnnotationPresent(Option.class)) {
+            throw new IllegalOptionException(parameter.getName());
+        }
         Option option = parameter.getAnnotation(Option.class);
         Class<?> type = parameter.getType();
         return parsers.get(type).parse(arguments, option);
@@ -30,8 +35,8 @@ public class Args {
 
     private static Map<Class<?>, OptionParser> parsers = Map.of(
             boolean.class, new BooleanParser(),
-            int.class, new SingleValueOptionParser<>(Integer::parseInt),
-            String.class, new SingleValueOptionParser<>(String::valueOf)
+            int.class, new SingleValueOptionParser<>(Integer::parseInt, 0),
+            String.class, new SingleValueOptionParser<>(String::valueOf, "")
     );
 
 }

@@ -1,5 +1,6 @@
 package org.cyb.tdd;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
@@ -9,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BooleanParserTest {
 
+    @DisplayName("sad path")
     @Test
     public void should_not_accept_extra_argument_for_boolean_option() {
         TooManyArgumentsException e = assertThrows(TooManyArgumentsException.class,
@@ -18,9 +20,16 @@ class BooleanParserTest {
         assertEquals("l", e.getValue());
     }
 
+    @DisplayName("default value")
     @Test
     public void should_set_default_value_to_false_if_option_not_present() {
         assertFalse(new BooleanParser().parse(asList(), option("l")));
+    }
+
+    @DisplayName("happy path")
+    @Test
+    public void should_set_value_to_true_if_option_present() {
+        assertTrue(new BooleanParser().parse(asList("-l"), option("l")));
     }
 
     static Option option(String value) {
